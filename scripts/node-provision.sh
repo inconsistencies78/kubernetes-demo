@@ -18,4 +18,10 @@ sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 apt-get -y install software-properties-common apt-transport-https curl 
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
 apt-add-repository "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+apt-get -y install kubeadm kubelet kubectl kubernetes-cni
 
+# Benutzer vagrant zu Gruppen hinzufügen
+adduser vagrant docker
+
+# Node nach Updates neu starten
+reboot
