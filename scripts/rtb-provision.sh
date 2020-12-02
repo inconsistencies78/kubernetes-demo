@@ -17,5 +17,3 @@ cp /vagrant/config/etc-firehol.conf /etc/firehol/firehol.conf
 cp /vagrant/config/etc-default-firehol /etc/default/firehol
 firehol start
 
-# Neustart nach Updates
-reboot
