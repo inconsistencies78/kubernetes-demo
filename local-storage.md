@@ -13,9 +13,13 @@ cp /vagrant/kube-config .kube/config
 # kubectl testen
 kubectl get pods --all-namespaces
 
+#Bash Autovervollständigen
+echo 'source <(kubectl completition bash)' >>~/.bashrc
+source .bashrc
+
 # persistent Volume anlegen
 sudo mkdir /mnt/data
-sudo echo "Hallo aus dem lokalen Volume auf node-2" > /mnt/data/index.html
+sudo sh -c "echo 'Hallo aus dem lokalen Volume auf node-2' > /mnt/data/index.html"
 
 kubectl apply -f /vagrant/storage/pv-volume.yaml
 kubectl apply -f /vagrant/storage/pv-pod.yaml
