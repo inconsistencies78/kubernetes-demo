@@ -8,7 +8,7 @@ exit
 
 vagrant ssh node-2
 mkdir .kube
-cp /vagrant/kube.config .kube/config
+cp /vagrant/kube-config .kube/config
 
 # kubectl testen
 kubectl get pods --all-namespaces
@@ -17,6 +17,6 @@ kubectl get pods --all-namespaces
 sudo mkdir /mnt/data
 sudo echo "Hallo aus dem lokalen Volume auf node-2" > /mnt/data/index.html
 
-kubectl apply -f storage/pv-volume.yaml
-kubectl apply -f storage/pv-pod.yaml
+kubectl apply -f /vagrant/storage/pv-volume.yaml
+kubectl apply -f /vagrant/storage/pv-pod.yaml
 ```
