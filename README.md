@@ -18,12 +18,12 @@ exit
 
 # Verbinden zum Node-2 und diesen zum Cluster hinzufügen
 vagrant ssh node-2
-sudo # -> (<SHIFT>+<Einfg>)
+sudo # -> (<STRG>+<Einfg>)
 exit
 
 # Verbinden zum Node-3 und diesen zum Cluster hinzufügen
 vagrant ssh node-3
-sudo # -> (<SHIFT>+<Einfg>)
+sudo # -> (<STRG>+<Einfg>)
 exit
 
 # zurück zum Master
