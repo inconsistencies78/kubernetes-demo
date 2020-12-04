@@ -38,4 +38,9 @@ source .bashrc
 
 # Anzeige der Pod - Node-Zuordnung
 kubectl get pod --all-namespaces -o json | jq '.items[] | .spec.nodeName + " -> " + .metadata.name'
+
+
+# vor einem Neustart 'make clean'. Erst dann evtl von git heruntergeadenes Verzeichnis löschen. Sonst fehlt der Rückgriff auf die Konfigurationsdatei, wenn ich zu früh das Verzeichnis lösche.
+make clean
+
 ```
