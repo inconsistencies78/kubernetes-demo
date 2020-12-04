@@ -23,4 +23,9 @@ sudo sh -c "echo 'Hallo aus dem lokalen Volume auf node-2' > /mnt/data/index.htm
 
 kubectl apply -f /vagrant/storage/pv-volume.yaml
 kubectl apply -f /vagrant/storage/pv-pod.yaml
+
+#Infos über das persistententes Volume mittels kubectl abrufen
+kubectl get pv
+
+
 ```
