@@ -1,0 +1,125 @@
+# Quelle: https://medium.com/@suyashmohan/setting-up-postgresql-database-on-kubernetes-24a2a192e962
+
+#Let’s define a Storage Class that uses the provisioner provided by microk8s. It is essentially local storage already set up inside micro8ks.
+
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: microk8s-hostpath
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: microk8s.io/hostpath
+
+---
+
+# define PersistentVolume that will use this Storage Class and following it we also define PersistenVolumeClaim to claim this volume
+# Since we are using a local disk provisioner we need to define where on host node our data will be saved. Here we choose /var/data/. Another important parameter is accessMode. Here we choose ReadWriteOnce. This will make sure only one pod can write at a time. So, no two pods end up with this volume for writing. We can also define what should be the size of this volume, which we choose 5Gb.
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-pv
+  labels:
+    app: postgres
+    type: local
+spec:
+  storageClassName: microk8s-hostpath
+  capacity:
+    storage: 3Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/var/data"
+
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgres-pv-claim
+  labels:
+    app: postgres
+spec:
+  storageClassName: microk8s-hostpath
+  capacity:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+
+---
+
+#Next, we will setup ConfigMap. They are just an easy way to provide configuration for our setup. The advantage is we can get the values like username and password by different means for example Environment Variables making sure we don’t end up saving passwords in our code. To keep this example simple we have hardcoded the values inside ConfigMap.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-configuration
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: awesomedb
+  POSTGRES_USER: amazinguser
+  POSTGRES_PASSWORD: perfectpassword
+
+---
+
+# The definition for Stateful Set is pretty much the same as Deployments. Here we have added two additional things. One we defined to load environment variables inside pod from the config map we defined earlier. Second the most important change, we defined our volume that will map to /var/lib/PostgreSQL/data inside our pod. This volume is defined using the persistent volume claim we used earlier.
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-statefulset
+  labels:
+    app: postgres
+spec:
+  serviceName: "postgres"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:12
+        envFrom:
+        - configMapRef:
+            name: postgres-configuration
+        ports:
+        - containerPort: 5432
+          name: postgresdb
+        volumeMounts:
+        - name: pv-data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: pv-data
+        persistentVolumeClaim:
+          claimName: postgres-pv-claim
+
+---
+
+# we can define a service resource to expose our database.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+  labels:
+    app: postgres
+spec:
+  ports:
+  - port: 5432
+    name: postgres
+  type: NodePort 
+  selector:
+    app: postgres
+
+---
+
+# auf gehts mit
+# sudo microk8s.kubectl apply -f file.yml
