@@ -25,7 +25,7 @@ metadata:
 spec:
   storageClassName: microk8s-hostpath
   capacity:
-    storage: 3Gi
+    storage: 5Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
@@ -46,7 +46,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 3Gi
+      storage: 5Gi
 
 ---
 
@@ -59,9 +59,9 @@ metadata:
   labels:
     app: postgres
 data:
-  POSTGRES_DB: awesomedb
-  POSTGRES_USER: amazinguser
-  POSTGRES_PASSWORD: perfectpassword
+  POSTGRES_DB: odoo-db
+  POSTGRES_USER: odoo
+  POSTGRES_PASSWORD: odoo
 
 ---
 
